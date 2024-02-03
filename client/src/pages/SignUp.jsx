@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import {Link, useNavigate} from 'react-router-dom'
-import { createUser } from '../api/signup.api'
+import { createUser } from '../api/auth.api'
 
 export default function SignUp() {
   const [formData, setFormData] = useState({})
@@ -15,7 +15,7 @@ export default function SignUp() {
   }
   const handleSubmit = async(e) => {
     setLoading(true);
-    e.preventDefault()
+    e.preventDefault();
     try {
       await createUser(formData)
       setError(null)
