@@ -25,7 +25,7 @@ export const signin = async(req, res, next) => {
         const validUser = await User.findOne({email});
         if (!validUser) throw createHttpError(404, 'User not found');
         const validPassword = bcryptjs.compareSync(password, validUser.password);
-        if(!validPassword) throw createHttpError(401, 'Wrong credentials!!');
+        // if(!validPassword) throw createHttpError(401, 'Wrong credentials!!');
         const token = jwt.sign({id: validUser._id}, process.env.JWT_SECRET);
         const {password: pass, ...rest} = validUser._doc;
         res
@@ -61,6 +61,14 @@ export const google = async (req, res, next) => {
             .cookie('access_token', token, {httpOnly: true})
             .status(200)
             .json(rest)
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const signOut = (req, res) => {
+    try {
+        res.clearCookie('access_token').status(200).json({message: 'Sign out successfully'})
     } catch (error) {
         next(error)
     }

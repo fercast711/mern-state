@@ -8,3 +8,6 @@ export const authUser = async (data) =>
 
 export const authUserGoogle = async (data) =>
     await axios.post('/api/auth/google', data);
+
+export const authSignOut = async () =>
+    await axios.get('/api/auth/signout');

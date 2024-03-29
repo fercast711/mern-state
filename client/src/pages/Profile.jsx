@@ -2,8 +2,9 @@ import {useSelector, useDispatch} from 'react-redux'
 import {useEffect, useRef, useState} from 'react'
 import {getDownloadURL, getStorage, ref, uploadBytesResumable} from 'firebase/storage'
 import { app } from '../firebase'
-import { updateFailure, updateStart, updateSuccess } from '../redux/user/userSlice'
-import { updateUser } from '../api/user.api'
+import { deleteUserFailure, deleteUserStart, deleteUserSuccess, signOutUserFailure, signOutUserStart, signOutUserSuccess, updateFailure, updateStart, updateSuccess } from '../redux/user/userSlice'
+import { deleteUser, updateUser } from '../api/user.api'
+import { authSignOut } from '../api/auth.api'
 
 export default function Profile() {
   const fileRef = useRef(null)
@@ -65,6 +66,24 @@ export default function Profile() {
     }
     )
   }
+  const handleDeleteUser = async() => {
+    try {
+      dispatch(deleteUserStart())
+      await deleteUser(currentUser._id)
+      dispatch(deleteUserSuccess())
+    } catch (error) {
+      dispatch(deleteUserFailure(error.response.data.message))
+    }
+  }
+  const handleSignOut = async() => {
+    try {
+      dispatch(signOutUserStart())
+      await authSignOut()
+      dispatch(signOutUserSuccess())
+    } catch (error) {
+      dispatch(signOutUserFailure(error.response.data.message))
+    }
+  }
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className=" text-3xl text-center font-semibold my-7">Profile</h1>
@@ -93,8 +112,12 @@ export default function Profile() {
         <button disabled={loading} className=' bg-slate-700 text-white p-3 hover:opacity-95 rounded-lg uppercase'>{loading ? 'loading...' : 'update'}</button>
       </form>
       <div className='flex justify-between mt-5'>
-        <span className='text-red-700 cursor-pointer'>Delete Account</span>
-        <span className='text-red-700 cursor-pointer'>Sign Out</span>
+        <span 
+        onClick={handleDeleteUser}
+        className='text-red-700 cursor-pointer'>Delete Account</span>
+        <span 
+        onClick={handleSignOut}
+        className='text-red-700 cursor-pointer'>Sign Out</span>
       </div>
       <p className=' text-red-700 mt-5'>{error || ''}</p>
       <p className=' text-green-700 mt-5'>{successUpdate ? 'User is updated successfully!!' : ''}</p>
