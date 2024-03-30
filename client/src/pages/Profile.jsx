@@ -5,6 +5,7 @@ import { app } from '../firebase'
 import { deleteUserFailure, deleteUserStart, deleteUserSuccess, signOutUserFailure, signOutUserStart, signOutUserSuccess, updateFailure, updateStart, updateSuccess } from '../redux/user/userSlice'
 import { deleteUser, updateUser } from '../api/user.api'
 import { authSignOut } from '../api/auth.api'
+import { Link } from 'react-router-dom'
 
 export default function Profile() {
   const fileRef = useRef(null)
@@ -110,6 +111,12 @@ export default function Profile() {
         <input onChange={handleChange}defaultValue={currentUser.email} placeholder='Email' className='rounded-lg border p-3' id='email' type='email'/>
         <input onChange={handleChange} placeholder='Password' className='rounded-lg border p-3' id='password' type='password'/>
         <button disabled={loading} className=' bg-slate-700 text-white p-3 hover:opacity-95 rounded-lg uppercase'>{loading ? 'loading...' : 'update'}</button>
+        <Link 
+        className='bg-green-700 text-white p-3 rounded-lg hover:opacity-95 text-center uppercase' 
+        to={'/create-listing'}
+        >
+          Create Listing
+        </Link>
       </form>
       <div className='flex justify-between mt-5'>
         <span 
