@@ -10,7 +10,6 @@ export const verifyToken = (req, res, next) => {
 
         jwt.verify(token, process.env.JWT_SECRET, (err, data) => {
             if(err) throw createHttpError(403, 'Forbidden')
-            console.log(data)
             req.user = data;
             next();
         })
