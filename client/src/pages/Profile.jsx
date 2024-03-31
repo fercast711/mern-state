@@ -93,7 +93,7 @@ export default function Profile() {
     }
   }
 
-  const handleListingDelete = async(id) => {
+  const handleListingDelete = async (id) => {
     try {
       await deleteListing(id);
       setUserListings([...userListings.filter(listing => listing._id !== id)])
@@ -177,10 +177,12 @@ export default function Profile() {
                 </p>
               </Link>
               <div className='flex flex-col items-center'>
-                <button 
-                onClick={() => handleListingDelete(listing._id)}
-                className='text-red-700 uppercase'>Delete</button>
-                <button className='text-green-700 uppercase'>Edit</button>
+                <button
+                  onClick={() => handleListingDelete(listing._id)}
+                  className='text-red-700 uppercase'>Delete</button>
+                <Link to={`/update-listing/${listing._id}`}>
+                  <button className='text-green-700 uppercase'>Edit</button>
+                </Link>
               </div>
             </div>
           ))}

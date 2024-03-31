@@ -5,3 +5,9 @@ export const createListing = async(data) =>
 
 export const deleteListing = async(id) => 
     axios.delete(`/api/listing/delete/${id}`)
+
+export const getListing = async(id) => 
+    axios.get(`/api/listing/get/${id}`)
+
+export const updateListing = async(id, data) => 
+    axios.patch(`/api/listing/update/${id}`,data)
