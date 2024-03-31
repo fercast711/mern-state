@@ -8,3 +8,6 @@ export const deleteUser = async(id) =>
 
 export const getUserListings = async(id) => 
     axios.get(`/api/user/listings/${id}`)
+
+export const getUser = async(id) => 
+    axios.get(`/api/user/${id}`)
