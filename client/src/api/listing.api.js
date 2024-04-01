@@ -11,3 +11,6 @@ export const getListing = async(id) =>
 
 export const updateListing = async(id, data) => 
     axios.patch(`/api/listing/update/${id}`,data)
+
+export const getListings = async(query) =>
+    axios.get(`/api/listing/get?${query}`)
