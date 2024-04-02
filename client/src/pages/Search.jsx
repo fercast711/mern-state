@@ -14,8 +14,9 @@ const Search = () => {
         sort: 'createdAt',
         order: 'desc'
     })
-    const [listings,setListings] = useState([])
+    const [listings, setListings] = useState([])
     const [loading, setLoading] = useState(false)
+    const [showMore, setShowMore] = useState(false)
     const handleChange = (e) => {
         if (e.target.id === 'all' || e.target.id === 'rent' || e.target.id === 'sale') {
             setSidebardata({ ...sidebardata, type: e.target.id })
@@ -29,24 +30,24 @@ const Search = () => {
             setSidebardata({ ...sidebardata, [e.target.id]: e.target.checked || e.target.checked === 'true' ? true : false })
         }
 
-        if(e.target.id === 'sort_order') {
+        if (e.target.id === 'sort_order') {
             const sort = e.target.value.split('_')[0] || 'createdAt'
             const order = e.target.value.split('_')[1] || 'desc'
 
-            setSidebardata({...sidebardata, sort, order})
+            setSidebardata({ ...sidebardata, sort, order })
         }
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const urlParams = new URLSearchParams()
-        urlParams.set('searchTerm',sidebardata.searchTerm)
-        urlParams.set('type',sidebardata.type)
-        urlParams.set('parking',sidebardata.parking)
-        urlParams.set('furnished',sidebardata.furnished)
-        urlParams.set('offer',sidebardata.offer)
-        urlParams.set('sort',sidebardata.sort)
-        urlParams.set('order',sidebardata.order)
+        urlParams.set('searchTerm', sidebardata.searchTerm)
+        urlParams.set('type', sidebardata.type)
+        urlParams.set('parking', sidebardata.parking)
+        urlParams.set('furnished', sidebardata.furnished)
+        urlParams.set('offer', sidebardata.offer)
+        urlParams.set('sort', sidebardata.sort)
+        urlParams.set('order', sidebardata.order)
 
         const searchQuery = urlParams.toString()
         navigate(`/search?${searchQuery}`)
@@ -77,6 +78,10 @@ const Search = () => {
                 setLoading(true)
                 const res = await getListings(urlParams.toString());
                 setListings(res.data);
+                if (res.data.length > 3) {
+                    setShowMore(true);
+                    setListings(res.data.slice(0, 3));
+                }
                 setLoading(false);
             } catch (error) {
                 setLoading(false);
@@ -85,6 +90,19 @@ const Search = () => {
         }
         fetchListings();
     }, [location.search])
+
+    const onShowMoreClick = async () => {
+        const numberOfListings = listings.length
+        const startIndex = numberOfListings;
+        const urlParams = new URLSearchParams(location.search)
+        urlParams.set('startIndex', startIndex)
+        const res = await getListings(urlParams.toString());
+        const { data } = res
+        if(data.length < 4){
+            setShowMore(false);
+        }
+        setListings([...listings, ...data]);
+    }
     return (
         <div className="flex flex-col md:flex-row">
             <div className="p-7 border-b-2 md:border-r-2 md:min-h-screen">
@@ -189,7 +207,7 @@ const Search = () => {
             <div className="flex-1">
                 <h1 className="text-3xl font-semibold border-b p-3 text-slate-700 mt-5">Listing results:</h1>
                 <div className="p-7 flex flex-wrap gap-4 ">
-                    {!loading && listings.length ===0 && (
+                    {!loading && listings.length === 0 && (
                         <p className="text-xl text-slate-700">No listings found!</p>
                     )}
                     {
@@ -199,10 +217,21 @@ const Search = () => {
                     }
                     {
                         !loading && listings && listings.length > 0 && listings.map((listing) => (
-                            <ListingItem key={listing._id} listing={listing}/>
+                            <ListingItem key={listing._id} listing={listing} />
                         ))
                     }
+
                 </div>
+                {
+                    showMore && (
+                        <button
+                            onClick={onShowMoreClick}
+                            className="text-green-700 hover:underline p-7 w-full"
+                        >
+                            Show More
+                        </button>
+                    )
+                }
             </div>
         </div>
     )
